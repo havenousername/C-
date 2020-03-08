@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1583688027 source:/Users/andreicristea/Public/c++_xcode/programming/01/cook/main.cpp
+	<iostream>
+	<vector>
+	<string>
+
