@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <string>
+//#include <string>
 
 using namespace std;
 
@@ -34,5 +34,6 @@ int main() {
         count = 0;
     }
 
+    string v = "Hello ";
     return 0;
 }
