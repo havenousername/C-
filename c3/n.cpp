@@ -84,7 +84,7 @@ int main()
       cin >> weather[i][j];
     }
   }
-  vector<vector<int> > transpose(M);
+  vector<vector<int>> transpose(M);
 
   for (int j = 0; j < M; j++)
   {
@@ -112,14 +112,14 @@ int main()
   {
     int max = 0;
     int index = 0;
-      for (int j = 0; j < transpose[i].size(); j++)
+    for (int j = 0; j < transpose[i].size(); j++)
+    {
+      if (transpose[i][j] > max)
       {
-        if (transpose[i][j] > max)
-        {
-          index = j;
-          max = transpose[i][j];
-        }
+        index = j;
+        max = transpose[i][j];
       }
+    }
     out = push(out, index + 1, max);
   }
 
@@ -138,15 +138,14 @@ int main()
   }
 
   // Second debugging
-//  for (auto o : out)
-//  {
-//    cout << "City: " << o.index << " Temperatures: ";
-//    for (auto v : o.values)
-//    {
-//      cout << v << " ";
-//    }
-//    cout << endl;
-//  }
+   for (auto o : out)
+   {
+     cout << "City: " << o.index << " Temperatures: ";
+     for (auto v : o.values)
+     {
+       cout << v << " ";
+     }
+     cout << endl;
+   }
   cout << biggest;
 }
-

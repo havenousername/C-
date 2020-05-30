@@ -84,7 +84,7 @@ int main()
       cin >> weather[i][j];
     }
   }
-  vector<vector<int>> transpose(M);
+  vector<vector<int> > transpose(M);
 
   for (int j = 0; j < M; j++)
   {
@@ -97,7 +97,7 @@ int main()
   vector<multi_arr> out;
 
   // checking transposion
-  cout << "Tansposed matrix: \n";
+  cout << "Transposed matrix: \n";
   for (auto o : transpose)
   {
     for (auto v : o)

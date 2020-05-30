@@ -97,29 +97,43 @@ int main()
   vector<multi_arr> out;
 
   // checking transposion
-  // cout << "Transposed matrix: \n";
-  // for (auto o : transpose)
-  // {
-  //   for (auto v : o)
-  //   {
-  //     cout << v << " ";
-  //   }
-  //   cout << endl;
-  // }
-  // cout << "End of transposed\n";
+  cout << "Tansposed matrix: \n";
+  for (auto o : transpose)
+  {
+    for (auto v : o)
+    {
+      cout << v << " ";
+    }
+    cout << endl;
+  }
+  cout << "End of transposed\n";
 
   for (int i = 0; i < transpose.size(); i++)
   {
     int max = 0;
     int index = 0;
+    if (allLessThenL(transpose, L))
+    {
       for (int j = 0; j < transpose[i].size(); j++)
       {
-        if (transpose[i][j] > max)
+        if (transpose[i][j] > max && hasNoDuplicates(transpose[i], j, transpose[i][j]))
         {
           index = j;
           max = transpose[i][j];
         }
       }
+    }
+    else
+    {
+      for (int j = 0; j < transpose[i].size(); j++)
+      {
+        if (transpose[i][j] > L && transpose[i][j] > max && hasNoDuplicates(transpose[i], j, transpose[i][j]))
+        {
+          index = j;
+          max = transpose[i][j];
+        }
+      }
+    }
     out = push(out, index + 1, max);
   }
 
@@ -130,23 +144,21 @@ int main()
 
   for (int i = 0; i < out.size(); i++)
   {
-    if (out[i].values.size() > cnt)
+    if (out[i].values.size() > cnt && !hasAllZeros(out[i].values, 0))
     {
       biggest = out[i].index;
       cnt = out[i].values.size();
     }
   }
 
-  // Second debugging
-//  for (auto o : out)
-//  {
-//    cout << "City: " << o.index << " Temperatures: ";
-//    for (auto v : o.values)
-//    {
-//      cout << v << " ";
-//    }
-//    cout << endl;
-//  }
+  // for (auto o : out)
+  // {
+  //   cout << "City: " << o.index << " Temperatures: ";
+  //   for (auto v : o.values)
+  //   {
+  //     cout << v << " ";
+  //   }
+  //   cout << endl;
+  // }
   cout << biggest;
 }
-

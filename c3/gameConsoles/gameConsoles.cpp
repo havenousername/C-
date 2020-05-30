@@ -40,14 +40,13 @@ int main(int argc, const char * argv[]) {
     }
     if (count == 0)
     {
-        cout << "NINCS" << endl;
+        cout << "NINCS";
     }else{
         cout << sevenGen.size() << " ";
         for (int a = 0; a < sevenGen.size(); a++)
         {
             cout << sevenGen[a] << " ";
         }
-        cout << endl;
     }
 
     
