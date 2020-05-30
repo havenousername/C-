@@ -9,6 +9,7 @@
 // The MultiSet type representation
 #include <iostream>
 #include <set>
+#include <vector>
 
 using namespace std;
 
@@ -162,8 +163,20 @@ bool isSubset(MultiSet& s, MultiSet& e){
  
 #include <iostream>
 
+using namespace std;
+
+bool hasNoDuplicates(vector<int> v, int i){
+  int j = 0;
+  while (j < v.size() && i != v[i])
+  {
+    j++;
+  }
+  return (j == v.size());
+}
+
 int main(int argc, const char * argv[]) {
     // insert code here...
-    std::cout << "Hello, World!\n";
+    vector<int > v = {1,1,2,3};
+    cout << hasNoDuplicates(v, 1);
     return 0;
 }
