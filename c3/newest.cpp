@@ -26,14 +26,29 @@ bool hasNoDuplicates(vector<int> v, int limit, int i)
   return (j == v.size());
 }
 
-bool hasAllZeros(vector<int> values)
+bool hasAllZeros(vector<int> values, int value = 0)
 {
   int j = 0;
-  while (j < values.size() && values[j] == 0)
+  while (j < values.size() && values[j] == value)
   {
     j++;
   }
   return (j == values.size());
+};
+
+bool allLessThenL(vector<vector<int>> values, int value = 0)
+{
+  int j = 0;
+  for (auto v : values)
+  {
+    int i = 0;
+    while (i < v.size() && v[i] <= value)
+    {
+      i++;
+    }
+    j += i;
+  }
+  return (j == values.size() * values[0].size());
 };
 
 vector<multi_arr> push(vector<multi_arr> s, int index, int value)
@@ -69,7 +84,7 @@ int main()
       cin >> weather[i][j];
     }
   }
-  vector<vector<int> > transpose(M);
+  vector<vector<int>> transpose(M);
 
   for (int j = 0; j < M; j++)
   {
@@ -97,12 +112,26 @@ int main()
   {
     int max = 0;
     int index = 0;
-    for (int j = 0; j < transpose[i].size(); j++)
+    if (allLessThenL(transpose, L))
     {
-      if (transpose[i][j] > L && transpose[i][j] > max && hasNoDuplicates(transpose[i], j, transpose[i][j]))
+      for (int j = 0; j < transpose[i].size(); j++)
       {
-        index = j;
-        max = transpose[i][j];
+        if (transpose[i][j] > max && hasNoDuplicates(transpose[i], j, transpose[i][j]))
+        {
+          index = j;
+          max = transpose[i][j];
+        }
+      }
+    }
+    else
+    {
+      for (int j = 0; j < transpose[i].size(); j++)
+      {
+        if (transpose[i][j] > L && transpose[i][j] > max && hasNoDuplicates(transpose[i], j, transpose[i][j]))
+        {
+          index = j;
+          max = transpose[i][j];
+        }
       }
     }
     out = push(out, index + 1, max);
@@ -115,7 +144,7 @@ int main()
 
   for (int i = 0; i < out.size(); i++)
   {
-    if (out[i].values.size() > cnt && !hasAllZeros(out[i].values))
+    if (out[i].values.size() > cnt && !hasAllZeros(out[i].values, 0))
     {
       biggest = out[i].index;
       cnt = out[i].values.size();
