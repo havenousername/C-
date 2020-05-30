@@ -72,6 +72,22 @@ vector<multi_arr> push(vector<multi_arr> s, int index, int value)
   return s;
 };
 
+int give_biggest(vector<multi_arr> out)
+{
+  int biggest = 0;
+  int cnt = 0;
+
+  for (int i = 0; i < out.size(); i++)
+  {
+    if (out[i].values.size() > cnt)
+    {
+      biggest = out[i].index;
+      cnt = out[i].values.size();
+    }
+  }
+  return biggest;
+};
+
 int main()
 {
   int N = 0, M = 0, L = 0;
@@ -114,38 +130,33 @@ int main()
     int index = 0;
     for (int j = 0; j < transpose[i].size(); j++)
     {
-      if (transpose[i][j] > max)
+      if (transpose[i][j] > max && hasNoDuplicates(transpose[i], j, transpose[i][j]))
+      {
+        index = j;
+        max = transpose[i][j];
+      }
+      else if (!hasNoDuplicates(transpose[i], j, transpose[i][j]) && give_biggest(out) == j && transpose[i][j] > max)
       {
         index = j;
         max = transpose[i][j];
       }
     }
+    cout << endl;
     out = push(out, index + 1, max);
   }
 
   sort(out.begin(), out.end(), compare_multi);
-
-  int biggest = 0;
-  int cnt = 0;
-
-  for (int i = 0; i < out.size(); i++)
-  {
-    if (out[i].values.size() > cnt)
-    {
-      biggest = out[i].index;
-      cnt = out[i].values.size();
-    }
-  }
+  int biggest = give_biggest(out);
 
   // Second debugging
-   for (auto o : out)
-   {
-     cout << "City: " << o.index << " Temperatures: ";
-     for (auto v : o.values)
-     {
-       cout << v << " ";
-     }
-     cout << endl;
-   }
+  for (auto o : out)
+  {
+    cout << "City: " << o.index << " Temperatures: ";
+    for (auto v : o.values)
+    {
+      cout << v << " ";
+    }
+    cout << endl;
+  }
   cout << biggest;
 }
