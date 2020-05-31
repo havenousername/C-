@@ -9,17 +9,28 @@
 
 using namespace std;
 
-int give_biggest(vector<int> out)
+struct big
 {
-    int biggest = 0;
+    int biggest;
+    bool isUnique;
+};
+
+
+big give_biggest(vector<int> out)
+{
+    big biggest = {0, true} ;
     int cnt = 0;
 
     for (int i = 0; i < out.size(); i++)
     {
         if (out[i] > cnt)
         {
-            biggest = i;
+            biggest.biggest = i;
             cnt = out[i];
+        }
+        else if(out[i] == cnt)
+        {
+            biggest.isUnique = false;
         }
     }
     return biggest;
@@ -90,6 +101,7 @@ int main()
                 else if (transpose[i][j] > max && !hasNoDuplicates(transpose[i], j, transpose[i][j]))
                 {
                     duplicates.insert(i);
+                    cout << "Value: " << i << " Max: "<< max  << endl; 
                 }
             }
             if (max > L)
@@ -102,40 +114,39 @@ int main()
     {
         out[0]++;
     }
-
-    int biggest = 1; 
-    if(duplicates.size() == 0){
-        biggest = give_biggest(out);
-    }else{
-        std::set<int>::iterator it;
-        for(it = duplicates.begin(); it != duplicates.end(); ++it){
-            for (int j = 1; j < out.size(); j++)
-            {
-                if (out[j] == out[j - 1])
-                {
-                    if (transpose[*it][j] > transpose[*it][j-1])
-                    {
-                        out[j]++;
-                    }
-                }
-            }
-        }
-        biggest = give_biggest(out);
-    }
+    // big biggest = {1, true};
+    // biggest = give_biggest(out);
+    // if(biggest.isUnique == false ){
+    //     std::set<int>::iterator it;
+    //     for(it = duplicates.begin(); it != duplicates.end(); ++it){
+    //         for (int j = 1; j < out.size(); j++)
+    //         {
+    //             if (out[j] == out[j - 1])
+    //             {
+    //                 if (transpose[*it][j] > transpose[*it][j-1])
+    //                 {
+    //                     cout <<"Count muther*ka: "<< out[j] << " Index: " << j << endl;
+    //                     out[j]++;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     biggest = give_biggest(out);
+    // }
     
 
-    //    std::set<int>::iterator it;
-    //    for(it = duplicates.begin(); it != duplicates.end(); ++it){
-    //        cout << *it << " ";
-    //    }
-    //    cout << endl;
+    // //    std::set<int>::iterator it;
+    // //    for(it = duplicates.begin(); it != duplicates.end(); ++it){
+    // //        cout << *it << " ";
+    // //    }
+    // //    cout << endl;
 
-    for (int i = 0; i < out.size(); i++)
-    {
-        cout << i << "  " << out[i] << endl;
-    }
-    cout << endl;
+    // for (int i = 0; i < out.size(); i++)
+    // {
+    //     cout << i << "  " << out[i] << endl;
+    // }
+    // cout << endl;
 
-    cout << biggest + 1;
+    // cout << biggest.biggest + 1;
     return 0;
 }
