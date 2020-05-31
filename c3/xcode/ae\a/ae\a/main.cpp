@@ -25,11 +25,14 @@ int give_biggest(vector<int> out)
     return biggest;
 };
 
-int maximum_temp(vector<int > v){
+int maximum_temp(vector<int> v)
+{
     int max = 0;
     int index = 0;
-    for (int i = 0; i < v.size(); i++) {
-        if (max > v[i]) {
+    for (int i = 0; i < v.size(); i++)
+    {
+        if (max > v[i])
+        {
             max = v[i];
             index = i;
         }
@@ -84,28 +87,27 @@ int main()
                     max = transpose[i][j];
                     index = j;
                 }
-                else if (transpose[i][j] > max && !hasNoDuplicates(transpose[i], j, transpose[i][j])){
-                    max = transpose[i][j];
-                    duplicates.insert(j);
+                else if (transpose[i][j] > max && !hasNoDuplicates(transpose[i], j, transpose[i][j]))
+                {
+                    index = j;
+                    duplicates.insert(i);
+                    max = max*max;
                 }
             }
-            if (max > L)
+            if (max > L && max < 50)
             {
                 out[index]++;
-            }else if(duplicates.size() != 0){
-                for (int i = 1; i < out.size(); i++) {
-                    if (out[i-1] == out[i]) {
-                        std::set<int>::iterator it;
-                        for(it = duplicates.begin(); it != duplicates.end(); ++it){
-                            if(*it == i){
-                                out[i]++;
-                            }else if(*it == (i-1)){
-                                out[i-1]++;
-                            }
-                        }
+            }
+            else if(duplicates.count(i))
+            {
+                for (int j = 0; j < transpose[i].size(); j++)
+                {
+                    if (out[index] == out[j] && transpose[i][j] < transpose[i][index] && index != j)
+                    {
+                        out[index]++;
                     }
                 }
-            }
+             }
         }
     }
     else
@@ -113,14 +115,19 @@ int main()
         out[0]++;
     }
 
+    //    std::set<int>::iterator it;
+    //    for(it = duplicates.begin(); it != duplicates.end(); ++it){
+    //        cout << *it << " ";
+    //    }
+    //    cout << endl;
 
-//    std::set<int>::iterator it;
-//    for(it = duplicates.begin(); it != duplicates.end(); ++it){
-//        cout << *it << " ";
-//    }
-//    cout << endl;
+    for(int i = 0; i < out.size(); i++){
+        cout << i << "  " << out[i] << endl;
+    }
+    cout << endl;
 
     int biggest = give_biggest(out);
     cout << biggest + 1;
     return 0;
 }
+

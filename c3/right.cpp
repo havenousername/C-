@@ -25,6 +25,21 @@ int give_biggest(vector<int> out)
     return biggest;
 };
 
+int maximum_temp(vector<int> v)
+{
+    int max = 0;
+    int index = 0;
+    for (int i = 0; i < v.size(); i++)
+    {
+        if (max > v[i])
+        {
+            max = v[i];
+            index = i;
+        }
+    }
+    return max;
+}
+
 bool hasNoDuplicates(vector<int> v, int limit, int i)
 {
     int j = 0;
@@ -39,7 +54,7 @@ int main()
 {
     int N = 0, M = 0, L = 0;
     cin >> N >> M >> L;
-    vector<vector<int> > weather(N, vector<int>(M, 0));
+    vector<vector<int>> weather(N, vector<int>(M, 0));
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < M; j++)
@@ -47,7 +62,7 @@ int main()
             cin >> weather[i][j];
         }
     }
-    vector<vector<int> > transpose(M);
+    vector<vector<int>> transpose(M);
     for (int j = 0; j < M; j++)
     {
         for (int i = 0; i < N; i++)
@@ -72,21 +87,26 @@ int main()
                     max = transpose[i][j];
                     index = j;
                 }
-                else if (transpose[i][j] > max && !hasNoDuplicates(transpose[i], j, transpose[i][j])){
-                    max = transpose[i][j];
+                else if (transpose[i][j] > max && !hasNoDuplicates(transpose[i], j, transpose[i][j]))
+                {
+                    index = j;
                     duplicates.insert(i);
+                    max = max * max;
                 }
             }
-            if (max > L)
+            if (max > L && max < 50)
             {
                 out[index]++;
             }
-            if(duplicates.size() != 0){
-                // for(int i = 0; i < out.size(); i++){
-                //     if(){
-
-                //     }
-                // }
+            else if (duplicates.count(i))
+            {
+                for (int j = 0; j < transpose[i].size(); j++)
+                {
+                    if (out[index] == out[j] && transpose[i][j] < transpose[i][index] && index != j)
+                    {
+                        out[index]++;
+                    }
+                }
             }
         }
     }
@@ -95,12 +115,17 @@ int main()
         out[0]++;
     }
 
+    //    std::set<int>::iterator it;
+    //    for(it = duplicates.begin(); it != duplicates.end(); ++it){
+    //        cout << *it << " ";
+    //    }
+    //    cout << endl;
 
-    std::set<int>::iterator it;
-    for(it = duplicates.begin(); it != duplicates.end(); ++it){
-        cout << *it << " ";
-    }
-    cout << endl;
+    // for (int i = 0; i < out.size(); i++)
+    // {
+    //     cout << i << "  " << out[i] << endl;
+    // }
+    // cout << endl;
 
     int biggest = give_biggest(out);
     cout << biggest + 1;
