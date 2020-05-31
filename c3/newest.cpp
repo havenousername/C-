@@ -151,14 +151,14 @@ int main()
     }
   }
 
-  // for (auto o : out)
-  // {
-  //   cout << "City: " << o.index << " Temperatures: ";
-  //   for (auto v : o.values)
-  //   {
-  //     cout << v << " ";
-  //   }
-  //   cout << endl;
-  // }
+  for (auto o : out)
+  {
+    cout << "City: " << o.index << " Temperatures: ";
+    for (auto v : o.values)
+    {
+      cout << v << " ";
+    }
+    cout << endl;
+  }
   cout << biggest;
 }

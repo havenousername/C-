@@ -1,6 +1,7 @@
 {
   "files.associations": {
     "*.icl": "clean",
-    "string": "cpp"
+    "string": "cpp",
+    "vector": "cpp"
   }
 }

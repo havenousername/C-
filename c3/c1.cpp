@@ -2,11 +2,11 @@
 #include <vector>
 using namespace std;
 
-vector<vector<int> > input()
+vector<vector<int>> input()
 {
     int numDays, numSettlements, tempLim;
     cin >> numSettlements >> numDays >> tempLim;
-    vector<vector<int >> data(numSettlements);
+    vector<vector<int>> data(numSettlements);
     for (int m = 0; m < numSettlements; ++m)
     {
         for (int n = 0; n < numDays; ++n)
@@ -21,14 +21,11 @@ vector<vector<int> > input()
 
 int processData(vector<vector<int> > data)
 {
-    long numSettlements = data.size();
-    long numDays = data[0].size();
-    int hotDayCounter[numSettlements];
-    for (int i = 0; i < numSettlements; i++)
-    {
-        hotDayCounter[i] = 0;
-    }
-    
+    int numSettlements = data.size();
+    int *hotDayCounter = new int[numSettlements];
+
+    int numDays = data[0].size();
+    hotDayCounter[numSettlements] = (int){0};
     int maxTemp = -1;
     int maxTempIndex = -1;
     for (int n = 0; n < numDays; ++n)
@@ -54,7 +51,8 @@ int processData(vector<vector<int> > data)
             maxIndex = i;
         }
     }
-    return maxIndex + 1;
+    delete[] hotDayCounter;
+     return maxIndex + 1;
 }
 
 void Start()
