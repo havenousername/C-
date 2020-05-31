@@ -25,11 +25,6 @@ int give_biggest(vector<int> out)
     return biggest;
 };
 
-bool is_the_biggest_count(vector<int> out, int dup_ind)
-{
-    return dup_ind == (give_biggest(out));
-};
-
 bool hasNoDuplicates(vector<int> v, int limit, int i)
 {
     int j = 0;
@@ -44,7 +39,7 @@ int main()
 {
     int N = 0, M = 0, L = 0;
     cin >> N >> M >> L;
-    vector<vector<int>> weather(N, vector<int>(M, 0));
+    vector<vector<int> > weather(N, vector<int>(M, 0));
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < M; j++)
@@ -52,7 +47,7 @@ int main()
             cin >> weather[i][j];
         }
     }
-    vector<vector<int>> transpose(M);
+    vector<vector<int> > transpose(M);
     for (int j = 0; j < M; j++)
     {
         for (int i = 0; i < N; i++)
@@ -62,6 +57,7 @@ int main()
     }
 
     vector<int> out(N);
+    set<int> duplicates;
 
     if (N > 1)
     {
@@ -76,10 +72,21 @@ int main()
                     max = transpose[i][j];
                     index = j;
                 }
+                else if (transpose[i][j] > max && !hasNoDuplicates(transpose[i], j, transpose[i][j])){
+                    max = transpose[i][j];
+                    duplicates.insert(i);
+                }
             }
-            if (max > L )
+            if (max > L)
             {
                 out[index]++;
+            }
+            if(duplicates.size() != 0){
+                // for(int i = 0; i < out.size(); i++){
+                //     if(){
+
+                //     }
+                // }
             }
         }
     }
@@ -87,6 +94,13 @@ int main()
     {
         out[0]++;
     }
+
+
+    std::set<int>::iterator it;
+    for(it = duplicates.begin(); it != duplicates.end(); ++it){
+        cout << *it << " ";
+    }
+    cout << endl;
 
     int biggest = give_biggest(out);
     cout << biggest + 1;
