@@ -1,3 +1,4 @@
+
 // ConsoleApplication1.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
@@ -9,17 +10,56 @@
 
 using namespace std;
 
-int give_biggest(vector<int> out)
+struct big
 {
-    int biggest = 0;
-    int cnt = 0;
+    int biggest;
+    bool isUnique;
+};
 
+struct count_and_max
+{
+    int count;
+    int max;
+};
+
+int find_duplicate(vector<int> v){
+    int i = 0;
+    for(int j = 0; j < v.size(); j++){
+        i = 0;
+        while((i < v.size() && v[i]!=v[j]) || i == j){
+            i++;
+        }
+        if(i < v.size()){
+            break;
+        }
+    }
+    return i;
+};
+
+int take_dup_index(vector<int> v, int d){
+    int j = 0;
+    while (j < v.size() && d != v[j]) {
+        j++;
+    }
+    if (j < v.size()) {
+        return j;
+    }else{
+        return 0;
+    }
+};
+
+big give_biggest(vector<count_and_max> out)
+{
+    big biggest = {0, true} ;
+    int cnt = 0;
+    // cout << 2 << ":" << out[2].count << endl;
     for (int i = 0; i < out.size(); i++)
     {
-        if (out[i] > cnt)
+        // cout << "Count: index" << i << " count: " << out[i].count << " cnt: " << cnt << endl;
+        if (out[i].count > cnt)
         {
-            biggest = i;
-            cnt = out[i];
+            biggest.biggest = i;
+            cnt = out[i].count;
         }
     }
     return biggest;
@@ -71,14 +111,14 @@ int main()
         }
     }
 
-    vector<int> out(N);
+    vector<count_and_max> out(N);
     set<int> duplicates;
 
     if (N > 1)
     {
         for (int i = 0; i < transpose.size(); i++)
         {
-            int max = 0;
+            int max = L;
             int index = 0;
             for (int j = 0; j < transpose[i].size(); j++)
             {
@@ -87,47 +127,60 @@ int main()
                     max = transpose[i][j];
                     index = j;
                 }
-                else if (transpose[i][j] > max && !hasNoDuplicates(transpose[i], j, transpose[i][j]))
+                else if(!hasNoDuplicates(transpose[i], j, transpose[i][j]))
                 {
-                    index = j;
                     duplicates.insert(i);
-                    max = max*max;
                 }
             }
-            if (max > L && max < 50)
+            if (max > L)
             {
-                out[index]++;
+                out[index].count += 1;
+                out[index].max = max;
             }
-            else if(duplicates.count(i))
+            int dup_ind = find_duplicate(transpose[i]);
+            if (duplicates.count(i) && transpose[i][dup_ind] == max)
             {
-                for (int j = 0; j < transpose[i].size(); j++)
-                {
-                    if (out[index] == out[j] && transpose[i][j] < transpose[i][index] && index != j)
-                    {
-                        out[index]++;
-                    }
-                }
-             }
+                out[take_dup_index(transpose[i], transpose[i][dup_ind])].count++;
+            }
         }
     }
     else
     {
-        out[0]++;
+        out[0].count++;
+    }
+    big biggest = {1, true};
+    biggest = give_biggest(out);
+    if(!biggest.isUnique){
+        std::set<int>::iterator it;
+        for(it = duplicates.begin(); it != duplicates.end(); ++it){
+            for (int j = 1; j < out.size(); j++)
+            {
+                if (out[j].count == out[j - 1].count)
+                {
+                    if (transpose[*it][j] > transpose[*it][j-1])
+                    {
+                        out[j].count++;
+                        
+                    }else{
+                        out[j-1].count++;
+                    }
+                }
+            }
+        }
+        biggest = give_biggest(out);
     }
 
-    //    std::set<int>::iterator it;
-    //    for(it = duplicates.begin(); it != duplicates.end(); ++it){
-    //        cout << *it << " ";
-    //    }
-    //    cout << endl;
+    // std::set<int>::iterator it;
+    // for(it = duplicates.begin(); it != duplicates.end(); ++it){
+    //     cout << *it << " ";
+    // }
+    // cout << endl;
 
-    for(int i = 0; i < out.size(); i++){
-        cout << i << "  " << out[i] << endl;
-    }
-    cout << endl;
+    // for (int i = 0; i < out.size(); i++)
+    // {
+    //     cout << i << "  " << out[i] << endl;
+    // }
 
-    int biggest = give_biggest(out);
-    cout << biggest + 1;
+    cout << biggest.biggest + 1;
     return 0;
 }
-

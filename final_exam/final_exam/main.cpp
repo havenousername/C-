@@ -1,53 +1,64 @@
-/*%% This solution was submitted and prepared by %% <Cristea Andrei, W61RAB> %% for the Final Coding Test of the Programming course.%% I declare that this solution is my own work.%% I have not copied or used third party solutions.%% I have not passed my solution to my classmates, neither  made it public.%% Students' regulation of Eotvos Lorand University %% (ELTE Regulations Vol. II. 74/C. § ) %% states that as long as a student presents another student's work%% - or at least the significant part of it - as their own%% performance, it will count as a disciplinary fault. %% The most serious consequence of a disciplinary fault %% can be dismissal of the student from the University.*/
 
 #include <iostream>
-#include <climits>
 #include <vector>
-
 using namespace std;
-
-struct offer {
-    int id_company, id_product, price;
+struct Meat
+{
+    string meatType;
+    int butcherID;
 };
-
-int main(int argc, const char * argv[]) {
-    int N = 0, M = 0, O = 0;
-    cin >> N >> M >> O;
-    vector<offer> Offers(O);
-    for (int i = 0; i < Offers.size(); i++) {
-        cin >> Offers[i].id_company >> Offers[i].id_product >> Offers[i].price;
-    }
-    // First subtask
-    int maxi = 0;
-    for (int i = 0; i < O; i++) {
-        if (Offers[i].price > Offers[maxi].price && Offers[i].id_product < Offers[maxi].id_product) {
-            maxi = i;
-        }
-    }
-    cout << "#\n";
-    cout << Offers[maxi].id_product << endl;
-    // Second subtask
-    cout << "#\n";
-    int max_cnt = -1;
-    int max_company = -1;
-    for (int company = 1; company < N; company++)
+bool isUnique(int id, int i, vector<Meat> meats)
+{
+    int j = 1;
+    while ((j < meats.size() && meats[j].butcherID != id) || (j == i))
     {
-        int cnt = 0;
-        for(offer o: Offers){
-            if(o.id_company == company) cnt++;
-        }
-        if(cnt > max_cnt){
-            max_cnt = cnt;
-            max_company = company;
+        j++;
+    }
+    return j == meats.size();
+};
+int main()
+{
+    int numberOfButchers;
+    cin >> numberOfButchers;
+    int numberOfPairs;
+    cin >> numberOfPairs;
+    vector<Meat> Pairs(numberOfPairs + 1);
+    for (int i = 1; i <= numberOfPairs; i++)
+    {
+        cin >> Pairs[i].meatType >> Pairs[i].butcherID;
+    }
+    //first subtask
+    cout << "#" << endl;
+    int cnt = 0;
+    vector<string> MeatTypes;
+    for (int i = 1; i <= numberOfPairs; i++)
+    {
+        MeatTypes.push_back(Pairs[i].meatType);
+    }
+    for (int i = 1; i <= MeatTypes.size(); i++)
+    {
+        int j = 0;
+        for (j = 0; j < i; j++)
+            if (MeatTypes[i] == MeatTypes[j])
+                break;
+        if (i == j)
+            cnt++;
+    }
+    cout << cnt << endl;
+    //second subtask
+    cout << "#" << endl;
+    //    vector<Meat> counting;
+    string unique_meat = "NONE";
+
+    for (int i = 1; i <= Pairs.size(); i++)
+    {
+        if (isUnique(Pairs[i].butcherID, i, Pairs))
+        {
+            cerr << Pairs[i].meatType;
+            unique_meat = Pairs[i].meatType;
+            break;
         }
     }
-    cout << max_company << endl;
-    cout << "#\n";
-    vector<int> comp_cnt(m+1);
-    for(auto o : Offers){
-        comp_cnt[o.id_product]++;
-    }
-    
-    cout << "#\n";
+    cout << unique_meat;
     return 0;
 }

@@ -1,0 +1,12 @@
+#
+3
+#
+pork
+#
+beef 3
+duck 2
+pork 1
+#
+1
+#
+3

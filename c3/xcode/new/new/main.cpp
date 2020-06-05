@@ -1,130 +1,126 @@
-// ConsoleApplication1.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
-#include <iostream>
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <set>
-
 using namespace std;
-
-int give_biggest(vector<int> out)
+struct Meat
 {
-    int biggest = 0;
-    int cnt = 0;
+    string meatType;
+    int butcherID;
 
-    for (int i = 0; i < out.size(); i++)
-    {
-        if (out[i] > cnt)
-        {
-            biggest = i;
-            cnt = out[i];
-        }
-    }
-    return biggest;
 };
 
-int maximum_temp(vector<int> v)
-{
-    int max = 0;
-    int index = 0;
-    for (int i = 0; i < v.size(); i++)
-    {
-        if (max > v[i])
-        {
-            max = v[i];
-            index = i;
-        }
-    }
-    return max;
-}
-
-bool hasNoDuplicates(vector<int> v, int limit, int i)
+bool isUniqueMeat(vector<Meat> m, string meat, int i)
 {
     int j = 0;
-    while ((j < v.size() && i != v[j]) || j == limit)
+    while ((j < m.size() && m[j].meatType != meat) || j == i)
     {
         j++;
     }
-    return (j == v.size());
+    return (j == m.size());
 };
 
 int main()
 {
-    int N = 0, M = 0, L = 0;
-    cin >> N >> M >> L;
-    vector<vector<int> > weather(N, vector<int>(M, 0));
-    for (int i = 0; i < N; i++)
+    int numberOfButchers;
+    cin>>numberOfButchers;
+    int numberOfPairs;
+    cin>>numberOfPairs;
+    vector<Meat>Pairs(numberOfPairs);
+    for (int i=0; i<numberOfPairs; i++)
     {
-        for (int j = 0; j < M; j++)
-        {
-            cin >> weather[i][j];
-        }
+        cin>>Pairs[i].meatType>>Pairs[i].butcherID;
     }
-    vector<vector<int> > transpose(M);
-    for (int j = 0; j < M; j++)
+    //first subtask
+    cout<<"#"<<endl;
+    int cnt=0;
+    vector<string>MeatTypes;
+    for (int i=0; i<numberOfPairs; i++)
     {
-        for (int i = 0; i < N; i++)
-        {
-            transpose[j].push_back(weather[i][j]);
+        MeatTypes.push_back(Pairs[i].meatType);
+    }
+    for (int i=1; i<=MeatTypes.size(); i++)
+    {
+        int j=0;
+        for (j=0; j<i; j++)
+            if (MeatTypes[i] == MeatTypes[j])
+            break;
+        if (i==j)
+            cnt++;
+    }
+    cout<<cnt<<endl;
+    // second subtask
+    cout << "#" << endl;
+    string unique_meat = "NONE";
+    for (int i = 0; i < numberOfPairs; i++)
+    {
+        if(isUniqueMeat(Pairs, Pairs[i].meatType, i)){
+            unique_meat = Pairs[i].meatType;
+            break;
         }
     }
 
-    vector<int> out(N);
-    set<int> duplicates;
-
-    if (N > 1)
+    int i = 0;
+    while (i < numberOfPairs && !isUniqueMeat(Pairs, Pairs[i].meatType, i)){
+        i++;
+    }
+    unique_meat = Pairs[i].meatType;
+    cout<< unique_meat << endl;
+    // third task
+    cout << "#" << endl;
+    set<string> s;
+    vector<Meat> count_meat;
+    // copy into set
+    for (int i = 0; i < Pairs.size(); i++)
     {
-        for (int i = 0; i < transpose.size(); i++)
+        s.insert(Pairs[i].meatType);
+    }
+
+    set<string>::iterator it;
+
+    // find counts
+    for (it = s.begin(); it != s.end(); ++it)
+    {
+        int j = 0;
+        Meat meat = {*it, 0};
+        count_meat.push_back(meat);
+        int count = 0;
+        while (j < numberOfPairs)
         {
-            int max = 0;
-            int index = 0;
-            for (int j = 0; j < transpose[i].size(); j++)
+            if (Pairs[j].meatType == meat.meatType)
             {
-                if (transpose[i][j] > max && hasNoDuplicates(transpose[i], j, transpose[i][j]))
-                {
-                    max = transpose[i][j];
-                    index = j;
-                }
-                else if (transpose[i][j] > max && !hasNoDuplicates(transpose[i], j, transpose[i][j]))
-                {
-                    duplicates.insert(i);
-                }
+                count_meat.back() = {*it, ++count};
             }
-            if (max > L)
-            {
-                out[index]++;
-                if(duplicates.count(i)){
-                    for (int j = 0; j < transpose[i].size(); j++)
-                    {
-                        if (out[index] == out[j] && transpose[i][j] < transpose[i][index] && index != j)
-                        {
-                            out[index]++;
-                        }
-                    }
-                }
-            }
+            j++;
         }
     }
-    else
+
+    for(auto c : count_meat){
+        cout << c.meatType << " " << c.butcherID << endl;
+    }
+
+    // fourth task
+    cout << "#" << endl;
+    int butcherest_butcher = Pairs[0].butcherID;
+    int butcherest_meat = 0;
+    for (int i = 0; i < numberOfPairs; i++)
     {
-        out[0]++;
+        int j = i+1;
+        int count = 0;
+        while (j < numberOfPairs)
+        {
+            if (Pairs[i].butcherID == Pairs[j].butcherID && Pairs[i].meatType != Pairs[j].meatType)
+            {
+                count++;
+                cerr << "Something" << endl;
+            }
+            j++;
+        }
+        if(count > butcherest_meat){
+            butcherest_meat = count;
+            butcherest_butcher = Pairs[i].butcherID;
+        }
     }
-
-    //    std::set<int>::iterator it;
-    //    for(it = duplicates.begin(); it != duplicates.end(); ++it){
-    //        cout << *it << " ";
-    //    }
-    //    cout << endl;
-
-    for(int i = 0; i < out.size(); i++){
-        cout << i << "  " << out[i] << endl;
-    }
-    cout << endl;
-
-    int biggest = give_biggest(out);
-    cout << biggest + 1;
+    cout << butcherest_butcher << endl;
     return 0;
 }
 

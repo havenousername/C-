@@ -1,0 +1,16 @@
+5
+Romania
+yellow
+1000
+Hungary
+brown
+1200
+Romania
+green
+1500
+Latvia
+blue
+700
+Hungary
+yellow
+800

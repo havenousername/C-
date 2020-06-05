@@ -1,3 +1,4 @@
+
 // ConsoleApplication1.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
@@ -6,50 +7,78 @@
 #include <vector>
 #include <algorithm>
 #include <set>
+#include <limits>
 
 using namespace std;
 
-struct big
+template <class T>
+
+T validate_input(const T low, const T high, const string& message, const string& error){
+    T input = low - 1;
+    while(input < low || input > high){
+        cout << message;
+
+        while((cin >> input).fail() || cin.peek() != '\n'){
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << error;
+        }
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    return input;
+}
+
+
+int find_duplicate(vector<int> v)
 {
-    int biggest;
-    bool isUnique;
+    int i = 0;
+    for (int j = 0; j < v.size(); j++)
+    {
+        i = 0;
+        while ((i < v.size() && v[i] != v[j]) || i == j)
+        {
+            i++;
+        }
+        if (i < v.size())
+        {
+            break;
+        }
+    }
+    return i;
 };
 
-
-big give_biggest(vector<int> out)
+int take_dup_index(vector<int> v, int d)
 {
-    big biggest = {0, true} ;
-    int cnt = 0;
+    int j = 0;
+    while (j < v.size() && d != v[j])
+    {
+        j++;
+    }
+    if (j < v.size())
+    {
+        return j;
+    }
+    else
+    {
+        return 0;
+    }
+};
 
+int give_biggest(vector<int> out)
+{
+    int biggest = 0;
+    int cnt = 0;
     for (int i = 0; i < out.size(); i++)
     {
         if (out[i] > cnt)
         {
-            biggest.biggest = i;
+            biggest = i;
             cnt = out[i];
-        }
-        else if(out[i] == cnt)
-        {
-            biggest.isUnique = false;
         }
     }
     return biggest;
 };
-
-int maximum_temp(vector<int> v)
-{
-    int max = 0;
-    int index = 0;
-    for (int i = 0; i < v.size(); i++)
-    {
-        if (max > v[i])
-        {
-            max = v[i];
-            index = i;
-        }
-    }
-    return max;
-}
 
 bool hasNoDuplicates(vector<int> v, int limit, int i)
 {
@@ -63,9 +92,19 @@ bool hasNoDuplicates(vector<int> v, int limit, int i)
 
 int main()
 {
+
     int N = 0, M = 0, L = 0;
-    cin >> N >> M >> L;
-    vector<vector<int>> weather(N, vector<int>(M, 0));
+    cout << "====Continuosly warmest settlement====\n";
+    cout << "Please write down settlements, days and temperature limit\n";
+    cout << "Separate each input by new line\n";
+
+
+    N = validate_input(1, 1000, "Settlement\n", "Error. Try again\n");
+    M = validate_input(1, 1000, "Day\n", "Error. Try again\n");
+    L = validate_input(20, 50, "Temperature limit\n", "Error. Try again\n");
+
+    cout << "Next, write down in each column settlement's temperature:\n";
+    vector<vector<int> > weather(N, vector<int>(M, 0));
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < M; j++)
@@ -73,7 +112,9 @@ int main()
             cin >> weather[i][j];
         }
     }
-    vector<vector<int>> transpose(M);
+
+    // First, transpose matrix in order to have simplify task
+    vector<vector<int> > transpose(M);
     for (int j = 0; j < M; j++)
     {
         for (int i = 0; i < N; i++)
@@ -82,31 +123,43 @@ int main()
         }
     }
 
+    // Initialize helper data collections
     vector<int> out(N);
     set<int> duplicates;
 
+    // Main computation part
     if (N > 1)
-    {
+    {   
+        // looping over transpose matrix in order to find in each column maximum temperatures
         for (int i = 0; i < transpose.size(); i++)
         {
-            int max = 0;
+            int max = L;
             int index = 0;
             for (int j = 0; j < transpose[i].size(); j++)
             {
+                // Take maximum temperature, which is unique (biggest temp can not have duplicates) 
                 if (transpose[i][j] > max && hasNoDuplicates(transpose[i], j, transpose[i][j]))
                 {
                     max = transpose[i][j];
                     index = j;
                 }
-                else if (transpose[i][j] > max && !hasNoDuplicates(transpose[i], j, transpose[i][j]))
+                // Take in count special case, thus take the columns index
+                else if (!hasNoDuplicates(transpose[i], j, transpose[i][j]))
                 {
                     duplicates.insert(i);
-                    cout << "Value: " << i << " Max: "<< max  << endl; 
                 }
             }
+            // increase count of index in out array
             if (max > L)
             {
-                out[index]++;
+                out[index] += 1;
+            }
+            int dup_ind = find_duplicate(transpose[i]);
+            // special case when our duplicated value, decides if the
+            // settement is the hottest
+            if (duplicates.count(i) && transpose[i][dup_ind] == max)
+            {
+                out[take_dup_index(transpose[i], transpose[i][dup_ind])]++;
             }
         }
     }
@@ -114,39 +167,12 @@ int main()
     {
         out[0]++;
     }
-    // big biggest = {1, true};
-    // biggest = give_biggest(out);
-    // if(biggest.isUnique == false ){
-    //     std::set<int>::iterator it;
-    //     for(it = duplicates.begin(); it != duplicates.end(); ++it){
-    //         for (int j = 1; j < out.size(); j++)
-    //         {
-    //             if (out[j] == out[j - 1])
-    //             {
-    //                 if (transpose[*it][j] > transpose[*it][j-1])
-    //                 {
-    //                     cout <<"Count muther*ka: "<< out[j] << " Index: " << j << endl;
-    //                     out[j]++;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     biggest = give_biggest(out);
-    // }
-    
 
-    // //    std::set<int>::iterator it;
-    // //    for(it = duplicates.begin(); it != duplicates.end(); ++it){
-    // //        cout << *it << " ";
-    // //    }
-    // //    cout << endl;
+    // take out the index with the biggest value
+    int biggest = give_biggest(out);
 
-    // for (int i = 0; i < out.size(); i++)
-    // {
-    //     cout << i << "  " << out[i] << endl;
-    // }
-    // cout << endl;
-
-    // cout << biggest.biggest + 1;
+    // transer in human readable format
+    cout << "The warmest settlement is:\n";
+    cout << biggest + 1 << endl;
     return 0;
 }

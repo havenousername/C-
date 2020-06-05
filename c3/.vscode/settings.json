@@ -2,6 +2,10 @@
   "files.associations": {
     "*.icl": "clean",
     "string": "cpp",
-    "vector": "cpp"
+    "vector": "cpp",
+    "set": "cpp",
+    "type_traits": "cpp",
+    "chrono": "cpp",
+    "unordered_map": "cpp"
   }
 }
