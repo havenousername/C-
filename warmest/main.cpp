@@ -3,9 +3,7 @@
 //
 
 #include <iostream>
-#include <iostream>
 #include <vector>
-#include <algorithm>
 #include <set>
 #include <limits>
 
@@ -13,7 +11,7 @@ using namespace std;
 
 template <class T>
 
-T validate_input(const T low, const T high, const string& message, const string& error){
+T validate_input(const T low, const T high, const string& message, const string& error, const string& mismatch){
     T input = low - 1;
     while(input < low || input > high){
         cout << message;
@@ -25,9 +23,14 @@ T validate_input(const T low, const T high, const string& message, const string&
         }
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        if (input < low || input > high)
+        {
+            cout << mismatch;
+        }
     }
     return input;
 }
+
 
 
 int find_duplicate(vector<int> v)
@@ -98,10 +101,12 @@ int main()
     cout << "Please write down settlements, days and temperature limit\n";
     cout << "Separate each input by new line\n";
 
+    const string type_error = "Error. Enter integer value\nTry again\n";
+    const string limit_error = "Error. Your integer value is out of bound\nTry again\n";
 
-    N = validate_input(1, 1000, "Settlement\n", "Error. Try again\n");
-    M = validate_input(1, 1000, "Day\n", "Error. Try again\n");
-    L = validate_input(20, 50, "Temperature limit\n", "Error. Try again\n");
+    N = validate_input(1, 1000, "Settlement\n", type_error, limit_error);
+    M = validate_input(1, 1000, "Day\n", type_error, limit_error);
+    L = validate_input(20, 50, "Temperature Limit\n", type_error, limit_error);
 
     cout << "Next, write down in each column settlement's temperature:\n";
     vector<vector<int> > weather(N, vector<int>(M, 0));
@@ -109,7 +114,7 @@ int main()
     {
         for (int j = 0; j < M; j++)
         {
-            cin >> weather[i][j];
+            cin >> weather[i][j]; 
         }
     }
 
