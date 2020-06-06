@@ -5,33 +5,59 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include <sstream>
 #include <limits>
+#include <string>
 
 using namespace std;
 
 template <class T>
 
-T validate_input(const T low, const T high, const string& message, const string& error, const string& mismatch){
+T validate_input(const T low, const T high, const string &message, const string &error, const string &mismatch)
+{
     T input = low - 1;
-    while(input < low || input > high){
+    while (input < low || input > high)
+    {
         cout << message;
 
-        while((cin >> input).fail() || cin.peek() != '\n'){
+        while ((cin >> input).fail() || cin.peek() != '\n')
+        {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << error;
+            cerr << error;
         }
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         if (input < low || input > high)
         {
-            cout << mismatch;
+            cerr << mismatch;
         }
     }
     return input;
 }
 
-
+vector<int> split_to_int(const string &s, char delimeter)
+{
+    vector<int> tokens;
+    string token;
+    istringstream tokenStream(s);
+    while (getline(tokenStream, token, delimeter))
+    {
+        try
+        {
+            if (stoi(token) >= 0 && stoi(token) <= 50)
+            {
+                tokens.push_back(stoi(token));
+            }
+        }
+        catch (exception &err)
+        {
+            cerr << "Error. Input should be integer\n";
+            break;
+        }
+    }
+    return tokens;
+};
 
 int find_duplicate(vector<int> v)
 {
@@ -109,17 +135,32 @@ int main()
     L = validate_input(20, 50, "Temperature Limit\n", type_error, limit_error);
 
     cout << "Next, write down in each column settlement's temperature:\n";
-    vector<vector<int> > weather(N, vector<int>(M, 0));
+    vector<vector<int>> weather(N, vector<int>(M, 0));
     for (int i = 0; i < N; i++)
     {
+        bool repeat = true;
+        vector<int> temp;
+        while (repeat)
+        {
+            string str;
+            getline(cin, str, '\n');
+            temp = split_to_int(str, ' ');
+            if (temp.size() < M)
+            {
+                repeat = true;
+                cerr << "Error found in line.\nAll temperatures in settlement should be in range 0<=Temperature<=50\nTry again\n";
+            }
+            else
+                repeat = false;
+        }
         for (int j = 0; j < M; j++)
         {
-            cin >> weather[i][j]; 
+            weather[i][j] = temp[j];
         }
     }
 
     // First, transpose matrix in order to have simplify task
-    vector<vector<int> > transpose(M);
+    vector<vector<int>> transpose(M);
     for (int j = 0; j < M; j++)
     {
         for (int i = 0; i < N; i++)
@@ -134,7 +175,7 @@ int main()
 
     // Main computation part
     if (N > 1)
-    {   
+    {
         // looping over transpose matrix in order to find in each column maximum temperatures
         for (int i = 0; i < transpose.size(); i++)
         {
@@ -142,7 +183,7 @@ int main()
             int index = 0;
             for (int j = 0; j < transpose[i].size(); j++)
             {
-                // Take maximum temperature, which is unique (biggest temp can not have duplicates) 
+                // Take maximum temperature, which is unique (biggest temp can not have duplicates)
                 if (transpose[i][j] > max && hasNoDuplicates(transpose[i], j, transpose[i][j]))
                 {
                     max = transpose[i][j];
