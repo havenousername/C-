@@ -1,6 +1,12 @@
+/*
+Created by: Andrei Cristea
 
-// ConsoleApplication1.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+Neptun: W61RAB
+E-mail: cristea.andrei997@gmail.com
+
+Task: „C3 - Closest islands
+
+*/
 
 #include <iostream>
 #include <vector>
@@ -59,6 +65,22 @@ vector<int> split_to_int(const string &s, char delimeter)
     return tokens;
 };
 
+bool all_less_than_L(vector<vector<int>> v, int M)
+{
+    int counter = 0;
+    for (int i = 0; i < v.size(); i++)
+    {
+        for (auto vi : v[i])
+        {
+            if (vi <= M)
+            {
+                counter++;
+            }
+        }
+    }
+    return (counter == (v.size() * v[0].size()));
+};
+
 int find_duplicate(vector<int> v)
 {
     int i = 0;
@@ -88,10 +110,7 @@ int take_dup_index(vector<int> v, int d)
     {
         return j;
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 };
 
 int give_biggest(vector<int> out)
@@ -109,7 +128,7 @@ int give_biggest(vector<int> out)
     return biggest;
 };
 
-bool hasNoDuplicates(vector<int> v, int limit, int i)
+bool has_no_duplicates(vector<int> v, int limit, int i)
 {
     int j = 0;
     while ((j < v.size() && i != v[j]) || j == limit)
@@ -123,15 +142,18 @@ int main()
 {
 
     int N = 0, M = 0, L = 0;
+    int biggest = 0;
     cout << "====Continuosly warmest settlement====\n";
     cout << "Please write down settlements, days and temperature limit\n";
     cout << "Separate each input by new line\n";
 
+    const int min_limit = 1;
+    const int max_limit = 1000;
     const string type_error = "Error. Enter integer value\nTry again\n";
     const string limit_error = "Error. Your integer value is out of bound\nTry again\n";
 
-    N = validate_input(1, 1000, "Settlement\n", type_error, limit_error);
-    M = validate_input(1, 1000, "Day\n", type_error, limit_error);
+    N = validate_input(min_limit, max_limit, "Settlement\n", type_error, limit_error);
+    M = validate_input(min_limit, max_limit, "Day\n", type_error, limit_error);
     L = validate_input(20, 50, "Temperature Limit\n", type_error, limit_error);
 
     cout << "Next, write down in each column settlement's temperature:\n";
@@ -161,62 +183,68 @@ int main()
 
     // First, transpose matrix in order to have simplify task
     vector<vector<int>> transpose(M);
-    for (int j = 0; j < M; j++)
+    if (all_less_than_L(weather, L))
     {
-        for (int i = 0; i < N; i++)
-        {
-            transpose[j].push_back(weather[i][j]);
-        }
-    }
-
-    // Initialize helper data collections
-    vector<int> out(N);
-    set<int> duplicates;
-
-    // Main computation part
-    if (N > 1)
-    {
-        // looping over transpose matrix in order to find in each column maximum temperatures
-        for (int i = 0; i < transpose.size(); i++)
-        {
-            int max = L;
-            int index = 0;
-            for (int j = 0; j < transpose[i].size(); j++)
-            {
-                // Take maximum temperature, which is unique (biggest temp can not have duplicates)
-                if (transpose[i][j] > max && hasNoDuplicates(transpose[i], j, transpose[i][j]))
-                {
-                    max = transpose[i][j];
-                    index = j;
-                }
-                // Take in count special case, thus take the columns index
-                else if (!hasNoDuplicates(transpose[i], j, transpose[i][j]))
-                {
-                    duplicates.insert(i);
-                }
-            }
-            // increase count of index in out array
-            if (max > L)
-            {
-                out[index] += 1;
-            }
-            int dup_ind = find_duplicate(transpose[i]);
-            // special case when our duplicated value, decides if the
-            // settement is the hottest
-            if (duplicates.count(i) && transpose[i][dup_ind] == max)
-            {
-                out[take_dup_index(transpose[i], transpose[i][dup_ind])]++;
-            }
-        }
+        biggest = -2;
     }
     else
     {
-        out[0]++;
+        for (int j = 0; j < M; j++)
+        {
+            for (int i = 0; i < N; i++)
+            {
+                transpose[j].push_back(weather[i][j]);
+            }
+        }
+
+        // Initialize helper data collections
+        vector<int> out(N);
+        set<int> duplicates;
+
+        // Main computation part
+        if (N > 1)
+        {
+            // looping over transpose matrix in order to find in each column maximum temperatures
+            for (int i = 0; i < transpose.size(); i++)
+            {
+                int max = L;
+                int index = 0;
+                for (int j = 0; j < transpose[i].size(); j++)
+                {
+                    // Take maximum temperature, which is unique (biggest temp can not have duplicates)
+                    if (transpose[i][j] > max && has_no_duplicates(transpose[i], j, transpose[i][j]))
+                    {
+                        max = transpose[i][j];
+                        index = j;
+                    }
+                    // Take in count special case, thus take the columns index
+                    else if (!has_no_duplicates(transpose[i], j, transpose[i][j]))
+                    {
+                        duplicates.insert(i);
+                    }
+                }
+                // increase count of index in out array
+                if (max > L)
+                {
+                    out[index] += 1;
+                }
+                int dup_ind = find_duplicate(transpose[i]);
+                // special case when our duplicated value, decides if the
+                // settement is the hottest
+                if (duplicates.count(i) && transpose[i][dup_ind] == max)
+                {
+                    out[take_dup_index(transpose[i], transpose[i][dup_ind])]++;
+                }
+            }
+        }
+        else
+        {
+            out[0]++;
+        }
+
+        // take out the index with the biggest value
+        biggest = give_biggest(out);
     }
-
-    // take out the index with the biggest value
-    int biggest = give_biggest(out);
-
     // transer in human readable format
     cout << "The warmest settlement is:\n";
     cout << biggest + 1 << endl;
