@@ -76,7 +76,7 @@ bool all_less_than_L(vector<vector<int> > v, int M){
         }
     }
     return (counter == (v.size() * v[0].size()));
-};
+}
 
 int find_duplicate(vector<int> v)
 {
@@ -139,7 +139,6 @@ int main()
 {
 
     int N = 0, M = 0, L = 0;
-    int biggest = 0;
     cout << "====Continuosly warmest settlement====\n";
     cout << "Please write down settlements, days and temperature limit\n";
     cout << "Separate each input by new line\n";
@@ -180,67 +179,70 @@ int main()
 
     // First, transpose matrix in order to have simplify task
     vector<vector<int> > transpose(M);
-        for (int j = 0; j < M; j++)
+    for (int j = 0; j < M; j++)
+    {
+        for (int i = 0; i < N; i++)
         {
-            for (int i = 0; i < N; i++)
-            {
-                transpose[j].push_back(weather[i][j]);
-            }
+            transpose[j].push_back(weather[i][j]);
         }
-        
-        
+    }
 
-        // Initialize helper data collections
-        vector<int> out(N);
-        set<int> duplicates;
+    // Initialize helper data collections
+    vector<int> out(N);
+    set<int> duplicates;
 
-        // Main computation part
-        if (N > 1)
+    // Main computation part
+    if (N > 1)
+    {
+        bool all_less = all_less_than_L(transpose, L);
+        // looping over transpose matrix in order to find in each column maximum temperatures
+        for (int i = 0; i < transpose.size(); i++)
         {
-            bool all_less = all_less_than_L(transpose, L);
-            // looping over transpose matrix in order to find in each column maximum temperatures
-            for (int i = 0; i < transpose.size(); i++)
+            int max = 0;
+            if (all_less)
             {
-                int max = L;
-                int index = 0;
-                int max_for_dup = 0;
-                for (int j = 0; j < transpose[i].size(); j++)
+                max = 0;
+            }else{
+                max = L;
+            }
+            
+            int index = 0;
+            for (int j = 0; j < transpose[i].size(); j++)
+            {
+                // Take maximum temperature, which is unique (biggest temp can not have duplicates)
+                if (transpose[i][j] > max && has_no_duplicates(transpose[i], j, transpose[i][j]))
                 {
-                    // Take maximum temperature, which is unique (biggest temp can not have duplicates)
-                    if (transpose[i][j] > max && has_no_duplicates(transpose[i], j, transpose[i][j]))
-                    {
-                        max = transpose[i][j];
-                        max_for_dup = transpose[i][j];
-                        index = j;
-                    }
-                    // Take in count special case, thus take the columns index
-                    else if (!has_no_duplicates(transpose[i], j, transpose[i][j]))
-                    {
-                        max_for_dup = transpose[i][j];
-                        duplicates.insert(i);
-                    }
+                    max = transpose[i][j];
+                    index = j;
                 }
-                // increase count of index in out array
-                if (max > L || all_less)
+                // Take in count special case, thus take the columns index
+                else if (!has_no_duplicates(transpose[i], j, transpose[i][j]))
                 {
-                    out[index] += 1;
-                }
-                int dup_ind = find_duplicate(transpose[i]);
-                // special case when our duplicated value, decides if the
-                // settement is the hottest
-                if (duplicates.count(i) && transpose[i][dup_ind] == max_for_dup)
-                {
-                    out[take_dup_index(transpose[i], transpose[i][dup_ind])]++;
+                    duplicates.insert(i);
                 }
             }
+            // increase count of index in out array
+            if (max > L || all_less)
+            {
+                out[index] += 1;
+            }
+            int dup_ind = find_duplicate(transpose[i]);
+            // special case when our duplicated value, decides if the
+            // settement is the hottest
+            if (duplicates.count(i) && transpose[i][dup_ind] == max)
+            {
+                out[take_dup_index(transpose[i], transpose[i][dup_ind])]++;
+            }
         }
-        else
-        {
-            out[0]++;
-        }
+    }
+    else
+    {
+        out[0]++;
+    }
 
-        // take out the index with the biggest value
-        biggest = give_biggest(out);
+    // take out the index with the biggest value
+    int biggest = give_biggest(out);
+
     // transer in human readable format
     cout << "The warmest settlement is:\n";
     cout << biggest + 1 << endl;

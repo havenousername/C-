@@ -75,7 +75,7 @@ bool all_less_than_L(vector<vector<int> > v, int M){
             }
         }
     }
-    return (counter == (v.size() * v.size()));
+    return (counter == (v.size() * v[0].size()));
 }
 
 int find_duplicate(vector<int> v)
@@ -179,10 +179,6 @@ int main()
 
     // First, transpose matrix in order to have simplify task
     vector<vector<int> > transpose(M);
-    if (all_less_than_L(weather, L))
-    {
-
-    }
     for (int j = 0; j < M; j++)
     {
         for (int i = 0; i < N; i++)
@@ -198,10 +194,18 @@ int main()
     // Main computation part
     if (N > 1)
     {
+        bool all_less = all_less_than_L(weather, L);
         // looping over transpose matrix in order to find in each column maximum temperatures
         for (int i = 0; i < transpose.size(); i++)
         {
-            int max = L;
+            int max = 0;
+            if (all_less)
+            {
+                max = 0;
+            }else{
+                max = L;
+            }
+            
             int index = 0;
             for (int j = 0; j < transpose[i].size(); j++)
             {
@@ -218,7 +222,7 @@ int main()
                 }
             }
             // increase count of index in out array
-            if (max > L)
+            if (max > L || all_less)
             {
                 out[index] += 1;
             }
